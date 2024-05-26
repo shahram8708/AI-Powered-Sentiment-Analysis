@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced AI Sentiment Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f5af19, #f12711, #a40606);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            margin-top: 20px;
+            transition: transform 0.3s ease;
+        }
+
+
+        .container:hover {
+            transform: scale(1.05);
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        textarea {
+            width: calc(100% - 20px);
+            height: 150px;
+            margin-top: 20px;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            color: #333;
+            resize: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            background-color: #12c2e9;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2c3e50;
+        }
+
+
+        #result {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            color: #ffffff;
+        }
+
+        .action-buttons button {
+            width: 48%;
+            display: inline-block;
+            margin: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>AI-Powered Sentiment Analysis</h1>
+        <p>Welcome to our AI-powered Sentiment Analysis Tool. This tool uses advanced machine learning algorithms to
+            analyze the sentiment of your text, determining if it's positive, negative, or neutral.</p>
+        <textarea id="textInput" placeholder="Insert text here..."></textarea>
+        <button onclick="analyzeSentiment()">Analyze</button>
+        <div id="result"></div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        function analyzeSentiment() {
+            const resultDiv = document.getElementById('result');
+            const textInput = document.getElementById('textInput').value;
+
+            if (!textInput) {
+                resultDiv.innerHTML = '<div class="result-item">Please enter some text.</div>';
+                return;
+            }
+
+            resultDiv.innerHTML = 'Analyzing...';
+
+            $.ajax({
+                type: 'POST',
+                url: '/analyze',
+                data: { 'text': textInput },
+                success: function (response) {
+                    const sentiment = response.sentiment;
+                    resultDiv.innerHTML = `
+                        <div class="result-item">
+                            <strong>Text:</strong> ${response.text}<br>
+                            <strong>Sentiment:</strong> ${sentiment}
+                            <div class="action-buttons">
+                                <button class="copy-button" onclick="copyToClipboard('${sentiment}')">Copy</button>
+                                <button class="audio-button" onclick="playAudio('${sentiment}')">Audio</button>
+                            </div>
+                        </div>`;
+                }
+            });
+        }
+
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            alert('Sentiment copied to clipboard!');
+        }
+
+        function playAudio(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            speechSynthesis.speak(utterance);
+        }
+    </script>
+</body>
+
+</html>
